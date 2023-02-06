@@ -1,9 +1,9 @@
 // import 'package:flutter/src/widgets/container.dart';
 // import 'package:flutter/src/widgets/framework.dart';
-import 'package:demo/page/create.dart';
-import 'page/dashboard.dart';
+import 'package:demo/page/order.dart';
+import 'page/product.dart';
 import 'page/setting.dart';
-import 'page/create.dart';
+import 'page/order.dart';
 import 'page/home.dart';
 import 'package:flutter/material.dart';
 
@@ -17,14 +17,14 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   int currentTab = 0;
   final List<Widget> screen = [
-    Dashboard(),
-    Create(),
+    Product(),
+    Order(),
     Setting(),
     HomePage(),
   ];
 
   final PageStorageBucket bucket = PageStorageBucket();
-  Widget currentScreen = Dashboard();
+  Widget currentScreen = Product();
 
   @override
   Widget build(BuildContext context) {
@@ -33,11 +33,10 @@ class _HomeState extends State<Home> {
         child: currentScreen,
         bucket: bucket,
       ),
-
-      // floatingActionButton: FloatingActionButton(
-      //   child: Icon(Icons.add),
-      //   onPressed: () {},
-      // ),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.add),
+        onPressed: () {},
+      ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: BottomAppBar(
         shape: CircularNotchedRectangle(),
@@ -55,7 +54,7 @@ class _HomeState extends State<Home> {
                     minWidth: 40,
                     onPressed: () {
                       setState(() {
-                        currentScreen = Dashboard();
+                        currentScreen = HomePage();
                         currentTab = 0;
                       });
                     },
@@ -63,11 +62,11 @@ class _HomeState extends State<Home> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(
-                          Icons.dashboard,
+                          Icons.home,
                           color: currentTab == 0 ? Colors.blue : Colors.grey,
                         ),
                         Text(
-                          'Dashboard',
+                          'Home',
                           style: TextStyle(
                               color:
                                   currentTab == 0 ? Colors.blue : Colors.grey),
@@ -79,7 +78,7 @@ class _HomeState extends State<Home> {
                     minWidth: 40,
                     onPressed: () {
                       setState(() {
-                        currentScreen = Create();
+                        currentScreen = Product();
                         currentTab = 1;
                       });
                     },
@@ -87,11 +86,11 @@ class _HomeState extends State<Home> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(
-                          Icons.create,
+                          Icons.category,
                           color: currentTab == 1 ? Colors.blue : Colors.grey,
                         ),
                         Text(
-                          'Create',
+                          'Product',
                           style: TextStyle(
                               color:
                                   currentTab == 1 ? Colors.blue : Colors.grey),
@@ -110,7 +109,7 @@ class _HomeState extends State<Home> {
                     minWidth: 40,
                     onPressed: () {
                       setState(() {
-                        currentScreen = HomePage();
+                        currentScreen = Order();
                         currentTab = 3;
                       });
                     },
@@ -118,11 +117,11 @@ class _HomeState extends State<Home> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(
-                          Icons.home,
+                          Icons.bookmarks,
                           color: currentTab == 3 ? Colors.blue : Colors.grey,
                         ),
                         Text(
-                          'Home',
+                          'Order',
                           style: TextStyle(
                               color:
                                   currentTab == 3 ? Colors.blue : Colors.grey),
