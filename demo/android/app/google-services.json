@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1016743172246",
+    "project_id": "fir-auth-uicha",
+    "storage_bucket": "fir-auth-uicha.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1016743172246:android:e765041e4c929932344ab7",
+        "android_client_info": {
+          "package_name": "com.example.demo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1016743172246-fq131h56h0nraf5e3r154nqet9taej1b.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyASiHmmHxmed4dcuKIX6dB44gnSKp7okvo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1016743172246-fq131h56h0nraf5e3r154nqet9taej1b.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

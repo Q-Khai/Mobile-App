@@ -1,41 +1,19 @@
-// import 'package:flutter/src/widgets/container.dart';
-// import 'package:flutter/src/widgets/framework.dart';
-import 'package:demo/auth_service.dart';
-import 'package:demo/page/order.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'page/product.dart';
-import 'page/setting.dart';
-import 'page/order.dart';
-import 'page/home.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:fluentui_system_icons/fluentui_system_icons.dart';
-import 'package:fluentui_icons/fluentui_icons.dart';
 
-class Home extends StatefulWidget {
-  const Home({super.key});
+import 'package:firebase_auth/firebase_auth.dart';
+import 'auth_service.dart';
+
+class HelloPage extends StatefulWidget {
+  const HelloPage({super.key});
 
   @override
-  State<Home> createState() => _HomeState();
+  // ignore: library_private_types_in_public_api
+  _HelloPageState createState() => _HelloPageState();
 }
 
-class _HomeState extends State<Home> {
-  int currentTab = 0;
-  final List<Widget> screen = [
-    HomePage(),
-    Product(),
-    Order(),
-    Setting(),
-  ];
-
-  final PageStorageBucket bucket = PageStorageBucket();
-  Widget currentScreen = Product();
-
-  void _onItemTapped(int index) {
-    setState(() {
-      currentTab = index;
-    });
-  }
-
+class _HelloPageState extends State<HelloPage> {
+  //String? user = FirebaseAuth.instance.currentUser!.email ?? FirebaseAuth.instance.currentUser!.displayName;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
