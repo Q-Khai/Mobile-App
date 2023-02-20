@@ -1,6 +1,5 @@
-import 'package:flutter/cupertino.dart';
+import 'package:demo/get_fcm.dart';
 import 'package:flutter/material.dart';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'auth_service.dart';
 
@@ -14,6 +13,10 @@ class HelloPage extends StatefulWidget {
 
 class _HelloPageState extends State<HelloPage> {
   //String? user = FirebaseAuth.instance.currentUser!.email ?? FirebaseAuth.instance.currentUser!.displayName;
+ void incrementCounter() async {
+    String? fcmKey = await getFcmToken();
+    print('FCM Key : $fcmKey');
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -56,6 +59,11 @@ class _HelloPageState extends State<HelloPage> {
                 AuthService().signOut();
               },
             ),
+            MaterialButton(
+              onPressed: (){
+                incrementCounter();
+            },
+            child: Text('Get Firebase Cloud Messaging'),)
           ],
         ),
       ),
