@@ -1,8 +1,6 @@
 // import 'dart:html';
-import 'dart:ui';
 import 'package:demo/auth_service.dart';
 import 'package:demo/components/my_textfield.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -38,28 +36,42 @@ class _LoginPageState extends State<LoginPage> {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text("Hello, \nGoogle Sign in",
-                style: TextStyle(fontSize: 30)),
-            GestureDetector(
-                onTap: () {
-                  AuthService().sigInWithGoogle();
+            Center(
+              child: FloatingActionButton.extended(
+                onPressed: () {
+                   AuthService().sigInWithGoogle();
                 },
-                child: const Image(
-                    width: 100, image: AssetImage('assets/google.png'))
-                // child: IconButton(
-                //   // style: ElevatedButton.styleFrom(
-                //   //   primary: Colors.white,
-                //   //   onPrimary: Colors.black,
-                //   //   minimumSize: Size(double.infinity, 50),
-                //   // ),
-                //   icon: FaIcon(
-                //     FontAwesomeIcons.google,
-                //     color: Colors.red,
-                //   ),
-                //   // label: Text('Sign Up with Google'),
-                //   onPressed: () {},
-                // )
-                ),
+                label: const Text('Sign in with Google'),
+                icon: Image.asset('assets/google_logo.png',
+                height: 32,
+                width: 32,),
+                backgroundColor: Colors.white,
+                foregroundColor: Colors.black,
+              ),
+            ),
+
+            // const Text("Hello, \nGoogle Sign in",
+            //     style: TextStyle(fontSize: 30)),
+            // GestureDetector(
+            //     onTap: () {
+            //       AuthService().sigInWithGoogle();
+            //     },
+            //     child: const Image(
+            //         width: 100, image: AssetImage('assets/google.png'))=
+            //     // child: IconButton(
+            //     //   // style: ElevatedButton.styleFrom(
+            //     //   //   primary: Colors.white,
+            //     //   //   onPrimary: Colors.black,
+            //     //   //   minimumSize: Size(double.infinity, 50),
+            //     //   // ),
+            //     //   icon: FaIcon(
+            //     //     FontAwesomeIcons.google,
+            //     //     color: Colors.red,
+            //     //   ),
+            //     //   // label: Text('Sign Up with Google'),
+            //     //   onPressed: () {},
+            //     // )
+            //     ),
           ],
         ),
       ),
