@@ -39,7 +39,7 @@ class AuthService {
     return await FirebaseAuth.instance.signInWithCredential(credential);
   }
 
-  signOut() {
+  signOut() async {
     FirebaseAuth.instance.signOut();
   }
 }
