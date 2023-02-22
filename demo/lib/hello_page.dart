@@ -15,10 +15,11 @@ class HelloPage extends StatefulWidget {
 
 class _HelloPageState extends State<HelloPage> {
   //String? user = FirebaseAuth.instance.currentUser!.email ?? FirebaseAuth.instance.currentUser!.displayName;
- void incrementCounter() async {
+  void incrementCounter() async {
     String? fcmKey = await getFcmToken();
     print('FCM Key : $fcmKey');
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -62,10 +63,11 @@ class _HelloPageState extends State<HelloPage> {
               },
             ),
             MaterialButton(
-              onPressed: (){
+              onPressed: () {
                 incrementCounter();
-            },
-            child: Text('Get Firebase Cloud Messaging'),)
+              },
+              child: Text('Get Firebase Cloud Messaging'),
+            )
           ],
         ),
       ),
