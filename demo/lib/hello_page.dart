@@ -2,6 +2,8 @@ import 'package:demo/get_fcm.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'auth_service.dart';
+import 'page/upload_image.dart';
+
 
 class HelloPage extends StatefulWidget {
   const HelloPage({super.key});
@@ -48,7 +50,7 @@ class _HelloPageState extends State<HelloPage> {
             ),
             MaterialButton(
               padding: const EdgeInsets.all(10),
-              color: Colors.green,
+              color: Colors.blue,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(5)),
               child: const Text(
@@ -66,6 +68,12 @@ class _HelloPageState extends State<HelloPage> {
             child: Text('Get Firebase Cloud Messaging'),)
           ],
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(context, MaterialPageRoute(builder: (context) => UploadImage()));
+        },
+        child: const Icon(Icons.add_a_photo),
       ),
     );
   }

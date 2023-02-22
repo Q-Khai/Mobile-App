@@ -39,7 +39,10 @@ class AuthService {
     return await FirebaseAuth.instance.signInWithCredential(credential);
   }
 
-  signOut() {
-    FirebaseAuth.instance.signOut();
+ Future<void> signOut() async {
+    final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+    final GoogleSignIn _googleSignIn = GoogleSignIn();
+    await _firebaseAuth.signOut();
+    await _googleSignIn.signOut();
   }
 }
