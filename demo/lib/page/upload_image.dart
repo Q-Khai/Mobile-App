@@ -34,7 +34,7 @@ class _UploadImageState extends State<UploadImage> {
 
     final request = http.MultipartRequest('POST', url);
     // request.headers.addAll({'Authorization': 'Bearer Token'});
-    request.files.add(await http.MultipartFile.fromPath('file', image!.path, contentType: MediaType('image', 'jpeg')));
+    request.files.add(await http.MultipartFile.fromPath('file', image!.path, contentType: MediaType('*', '*')));
 
     final response = await request.send();
 
