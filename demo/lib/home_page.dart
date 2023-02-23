@@ -3,6 +3,7 @@
 import 'package:demo/auth_service.dart';
 import 'package:demo/page/order.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:provider/provider.dart';
 import 'page/product.dart';
 import 'page/setting.dart';
 import 'page/order.dart';
