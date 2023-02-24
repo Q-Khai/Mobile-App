@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:http_parser/http_parser.dart';
 
 class UploadImage extends StatefulWidget {
   const UploadImage({Key? key}) : super(key: key);
@@ -33,7 +34,7 @@ class _UploadImageState extends State<UploadImage> {
 
     final request = http.MultipartRequest('POST', url);
     // request.headers.addAll({'Authorization': 'Bearer Token'});
-    request.files.add(await http.MultipartFile.fromPath('file', image!.path));
+    request.files.add(await http.MultipartFile.fromPath('file', image!.path, contentType: MediaType('*', '*')));
 
     final response = await request.send();
 
