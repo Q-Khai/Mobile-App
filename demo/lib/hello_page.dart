@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:demo/get_fcm.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -16,7 +18,7 @@ class HelloPage extends StatefulWidget {
 
 class _HelloPageState extends State<HelloPage> {
   //String? user = FirebaseAuth.instance.currentUser!.email ?? FirebaseAuth.instance.currentUser!.displayName;
-
+List<dynamic> agencys = [];
 // Test Authorize
   void testAuthor() async {
 
@@ -35,6 +37,10 @@ class _HelloPageState extends State<HelloPage> {
     } else {
       print('fetch data failed with status code ${response.statusCode}');
     }
+    final json = jsonDecode(response.body);
+    setState(() {
+      agencys = json['data'];
+    });
   }
 
 // Get token device
@@ -52,7 +58,32 @@ class _HelloPageState extends State<HelloPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(
+            const SizedBox(
+              height: 30,
+            ),
+
+            agencys.length == 0
+            ? Text(
+              'List Agency',
+              style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87),
+            )
+            : Expanded(
+              child: ListView.builder(
+                itemCount: agencys.length,
+                itemBuilder: (context, index){
+                  final agency = agencys[index];
+                  int idagency = agency['idagency'];
+                  final nameagency = agency['name'];
+                  return ListTile(
+                    title: Text(nameagency),
+                    leading: Text(idagency.toString()),
+                  );
+              }),
+            ),
+             Text(
               FirebaseAuth.instance.currentUser!.displayName!,
               style: const TextStyle(
                   fontSize: 30,

@@ -36,8 +36,6 @@ class AuthService {
     UserCredential userCredential =
         await FirebaseAuth.instance.signInWithCredential(credential);
 
-    print(userCredential.user?.getIdToken().then((value) => print(value)));
-
     var accessToken = userCredential.user?.getIdToken().then((value) => sendToken(value));
     
     //Gửi token cho server
@@ -63,8 +61,7 @@ class AuthService {
     
     // Nhận tokens trả về từ server
       final json = jsonDecode(response.body);
-      print(json['accessToken']);
-      print(json['refreshToken']);
+    
 
     // Lưu accessToken và refreshToken trả về từ server vào storage;
      setTokenToStorage(json['accessToken'],json['refreshToken']);
