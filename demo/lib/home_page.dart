@@ -3,12 +3,12 @@
 import 'package:demo/auth_service.dart';
 import 'package:demo/page/order.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:provider/provider.dart';
 import 'page/product.dart';
 import 'page/setting.dart';
 import 'page/order.dart';
 import 'page/home.dart';
 import 'package:flutter/material.dart';
-import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:fluentui_icons/fluentui_icons.dart';
 
 class Home extends StatefulWidget {
@@ -39,47 +39,41 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        color: Colors.white,
-        width: MediaQuery.of(context).size.width,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              FirebaseAuth.instance.currentUser!.displayName!,
-              style: const TextStyle(
-                  fontSize: 30,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87),
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            Text(
-              FirebaseAuth.instance.currentUser!.email!,
-              style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87),
-            ),
-            const SizedBox(
-              height: 30,
-            ),
-            MaterialButton(
-              padding: const EdgeInsets.all(10),
-              color: Colors.green,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(5)),
-              child: const Text(
-                'LOG OUT',
-                style: TextStyle(color: Colors.white, fontSize: 15),
-              ),
-              onPressed: () {
-                AuthService().signOut();
-              },
-            ),
-          ],
+      appBar: AppBar(
+        title: const Center(
+          child: Text("FPT"),
         ),
+      ),
+      body: Center(
+        child: screen[currentTab],
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        onTap: _onItemTapped,
+        currentIndex: currentTab,
+        elevation: 10,
+        showSelectedLabels: false,
+        showUnselectedLabels: false,
+        selectedItemColor: Colors.blueGrey,
+        type: BottomNavigationBarType.fixed,
+        unselectedItemColor: const Color(0xFF526480),
+        items: const [
+          BottomNavigationBarItem(
+              icon: Icon(FluentSystemIcons.ic_fluent_home_regular),
+              activeIcon: Icon(FluentSystemIcons.ic_fluent_home_filled),
+              label: "Home"),
+          BottomNavigationBarItem(
+              icon: Icon(FluentSystemIcons.ic_fluent_bookmark_regular),
+              activeIcon: Icon(FluentSystemIcons.ic_fluent_bookmark_filled),
+              label: "Product"),
+          BottomNavigationBarItem(
+              icon: Icon(FluentSystemIcons.ic_fluent_add_circle_regular),
+              activeIcon: Icon(FluentSystemIcons.ic_fluent_add_filled),
+              label: "Order"),
+          BottomNavigationBarItem(
+              icon: Icon(FluentSystemIcons.ic_fluent_settings_dev_regular),
+              activeIcon: Icon(FluentSystemIcons.ic_fluent_settings_filled),
+              label: "Setting"),
+        ],
       ),
     );
   }
