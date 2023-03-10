@@ -1,15 +1,19 @@
 // import 'package:flutter/src/widgets/container.dart';
 // import 'package:flutter/src/widgets/framework.dart';
-import 'package:demo/auth_service.dart';
-import 'package:demo/page/order.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 // import 'package:provider/provider.dart';
-import 'page/product.dart';
+
+
+
+import 'package:demo/page/upload_product.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'page/setting.dart';
-import 'page/order.dart';
 import 'page/home.dart';
+import 'page/order.dart';
+import 'page/theme.dart';
 import 'package:flutter/material.dart';
-import 'package:fluentui_icons/fluentui_icons.dart';
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
+
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -22,13 +26,13 @@ class _HomeState extends State<Home> {
   int currentTab = 0;
   final List<Widget> screen = [
     HomePage(),
-    Product(),
+    Themes(),
     Order(),
     Setting(),
   ];
 
   final PageStorageBucket bucket = PageStorageBucket();
-  Widget currentScreen = Product();
+  Widget currentScreen = Themes();
 
   void _onItemTapped(int index) {
     setState(() {
@@ -39,42 +43,53 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Center(
-          child: Text("FPT"),
-        ),
-      ),
+      // appBar: AppBar(
+      //   title: const Center(
+      //     child: Text("FPT"),
+      //   ),
+      // ),
       body: Center(
         child: screen[currentTab],
       ),
       bottomNavigationBar: BottomNavigationBar(
         onTap: _onItemTapped,
         currentIndex: currentTab,
-        elevation: 10,
-        showSelectedLabels: false,
+        elevation: 20,
+        iconSize: 32,
+        selectedLabelStyle: TextStyle(fontWeight: FontWeight.bold),
+        showSelectedLabels: true,
         showUnselectedLabels: false,
-        selectedItemColor: Colors.blueGrey,
+        selectedItemColor: Colors.deepPurpleAccent,
         type: BottomNavigationBarType.fixed,
-        unselectedItemColor: const Color(0xFF526480),
+        unselectedItemColor:  Colors.deepPurpleAccent,
         items: const [
           BottomNavigationBarItem(
-              icon: Icon(FluentSystemIcons.ic_fluent_home_regular),
-              activeIcon: Icon(FluentSystemIcons.ic_fluent_home_filled),
+              icon: Icon(FluentIcons.home_16_regular),
+              activeIcon: Icon(FluentIcons.home_12_filled),
               label: "Home"),
           BottomNavigationBarItem(
-              icon: Icon(FluentSystemIcons.ic_fluent_bookmark_regular),
-              activeIcon: Icon(FluentSystemIcons.ic_fluent_bookmark_filled),
+              icon: Icon(FluentIcons.box_24_regular),
+              activeIcon: Icon(FluentIcons.box_16_filled),
               label: "Product"),
           BottomNavigationBarItem(
-              icon: Icon(FluentSystemIcons.ic_fluent_add_circle_regular),
-              activeIcon: Icon(FluentSystemIcons.ic_fluent_add_filled),
+              icon: Icon(FluentIcons.clipboard_16_regular),
+              activeIcon: Icon(FluentIcons.clipboard_16_filled),
               label: "Order"),
           BottomNavigationBarItem(
-              icon: Icon(FluentSystemIcons.ic_fluent_settings_dev_regular),
-              activeIcon: Icon(FluentSystemIcons.ic_fluent_settings_filled),
+              icon: Icon(FluentIcons.settings_16_regular),
+              activeIcon: Icon(FluentIcons.settings_16_filled),
               label: "Setting"),
         ],
       ),
+      // floatingActionButton: FloatingActionButton.extended(
+      //   onPressed: () {
+      //     Navigator.push(
+      //         context, MaterialPageRoute(builder: (context) => UploadImage()));
+      //   },
+      //   label: Text('Create Theme'),
+      //   icon: const Icon(Icons.add_a_photo),
+      //   backgroundColor: Colors.deepPurpleAccent,
+      // ),
     );
   }
 }

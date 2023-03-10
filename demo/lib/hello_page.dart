@@ -1,8 +1,10 @@
+import 'dart:convert';
+
 import 'package:demo/get_fcm.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'auth_service.dart';
-import 'page/upload_image.dart';
+import 'page/upload_product.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
@@ -16,6 +18,7 @@ class HelloPage extends StatefulWidget {
 
 class _HelloPageState extends State<HelloPage> {
   //String? user = FirebaseAuth.instance.currentUser!.email ?? FirebaseAuth.instance.currentUser!.displayName;
+List<dynamic> agencys = [];
 
 
 // Test Authorize
@@ -36,6 +39,10 @@ class _HelloPageState extends State<HelloPage> {
     } else {
       print('fetch data failed with status code ${response.statusCode}');
     }
+    final json = jsonDecode(response.body);
+    setState(() {
+      agencys = json['data'];
+    });
   }
 
 // Get token device
@@ -53,7 +60,32 @@ class _HelloPageState extends State<HelloPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(
+            const SizedBox(
+              height: 30,
+            ),
+
+            agencys.length == 0
+            ? Text(
+              'List Agency',
+              style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87),
+            )
+            : Expanded(
+              child: ListView.builder(
+                itemCount: agencys.length,
+                itemBuilder: (context, index){
+                  final agency = agencys[index];
+                  int idagency = agency['idagency'];
+                  final nameagency = agency['name'];
+                  return ListTile(
+                    title: Text(nameagency),
+                    leading: Text(idagency.toString()),
+                  );
+              }),
+            ),
+             Text(
               FirebaseAuth.instance.currentUser!.displayName!,
               style: const TextStyle(
                   fontSize: 30,
@@ -107,8 +139,7 @@ class _HelloPageState extends State<HelloPage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => UploadImage()));
+         
         },
         child: const Icon(Icons.add_a_photo),
       ),
