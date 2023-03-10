@@ -4,7 +4,7 @@ import 'package:demo/get_fcm.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'auth_service.dart';
-import 'page/upload_image.dart';
+import 'page/upload_product.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
@@ -139,8 +139,7 @@ List<dynamic> agencys = [];
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => UploadImage()));
+         
         },
         child: const Icon(Icons.add_a_photo),
       ),

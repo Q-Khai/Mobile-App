@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:demo/hello_page.dart';
 import 'package:demo/home_page.dart';
+import 'package:demo/page/home.dart';
 import 'package:demo/page/login.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -14,7 +15,7 @@ class AuthService {
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (BuildContext context, snapshot) {
           if (snapshot.hasData) {
-            return HelloPage();
+            return Home();
           } else {
             return LoginPage();
           }
@@ -35,9 +36,11 @@ class AuthService {
 
     UserCredential userCredential =
         await FirebaseAuth.instance.signInWithCredential(credential);
-
     var accessToken = userCredential.user?.getIdToken().then((value) => sendToken(value));
-    
+    print("MY UID: "+ (userCredential.user?.uid).toString());
+
+    //Set uid cho local 
+    setUserInfoToStorage(userCredential.user?.uid);
     //Gửi token cho server
     sendToken(accessToken);
     return await FirebaseAuth.instance.signInWithCredential(credential);
@@ -73,6 +76,11 @@ class AuthService {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('accessToken', accessToken);
     await prefs.setString('refreshToken', refreshToken);
+  }
+
+  setUserInfoToStorage(uid) async {
+     SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('uid', uid);
   }
 
   Future<void> signOut() async {
