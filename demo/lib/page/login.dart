@@ -19,62 +19,203 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: const Text("Login"),
-        backgroundColor: Colors.blue,
-      ),
       body: Container(
-        width: size.width,
-        height: size.height,
-        padding: EdgeInsets.only(
-            left: 20,
-            right: 20,
-            top: size.height * 0.2,
-            bottom: size.height * 0.5),
+        width: double.infinity,
+        decoration: BoxDecoration(
+            gradient: LinearGradient(begin: Alignment.topCenter, colors: [
+          Colors.purple,
+          Colors.blue,
+          Colors.white
+          // Color.fromARGB(255, 176, 106, 231),
+          // Color.fromARGB(255, 166, 112, 232),
+          // Color.fromARGB(255, 131, 123, 232),
+          // Color.fromARGB(255, 104, 132, 231),
+        ])),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Center(
-              child: FloatingActionButton.extended(
-                onPressed: () {
-                   AuthService().sigInWithGoogle();
-                },
-                label: const Text('Sign in with Google'),
-                icon: Image.asset('assets/google_logo.png',
-                height: 32,
-                width: 32,),
-                backgroundColor: Colors.white,
-                foregroundColor: Colors.black,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            SizedBox(
+              height: 80,
+            ),
+            Padding(
+              padding: EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Icon(
+                    Icons.people,
+                    size: 40,
+                    color: Colors.white,
+                  ),
+                  Text(
+                    "For Creators",
+                    style: TextStyle(color: Colors.white, fontSize: 50),
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Text(
+                    "Login",
+                    style: TextStyle(color: Colors.white, fontSize: 25),
+                  )
+                ],
               ),
             ),
-
-            // const Text("Hello, \nGoogle Sign in",
-            //     style: TextStyle(fontSize: 30)),
-            // GestureDetector(
-            //     onTap: () {
-            //       AuthService().sigInWithGoogle();
-            //     },
-            //     child: const Image(
-            //         width: 100, image: AssetImage('assets/google.png'))=
-            //     // child: IconButton(
-            //     //   // style: ElevatedButton.styleFrom(
-            //     //   //   primary: Colors.white,
-            //     //   //   onPrimary: Colors.black,
-            //     //   //   minimumSize: Size(double.infinity, 50),
-            //     //   // ),
-            //     //   icon: FaIcon(
-            //     //     FontAwesomeIcons.google,
-            //     //     color: Colors.red,
-            //     //   ),
-            //     //   // label: Text('Sign Up with Google'),
-            //     //   onPressed: () {},
-            //     // )
-            //     ),
+            SizedBox(height: 20),
+            Expanded(
+              child: Container(
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(60),
+                        topRight: Radius.circular(60))),
+                child: SingleChildScrollView(
+                  child: Padding(
+                    padding: EdgeInsets.all(30),
+                    child: Column(
+                      children: <Widget>[
+                        SizedBox(
+                          height: 60,
+                        ),
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(10),
+                            // boxShadow: [
+                            //   BoxShadow(
+                            //       color: Color.fromRGBO(124, 77, 255, 1),
+                            //       blurRadius: 20,
+                            //       offset: Offset(0, 10))
+                            // ]
+                          ),
+                          child: Column(
+                            children: <Widget>[
+                              Container(
+                                padding: EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                    border: Border(
+                                        bottom:
+                                            BorderSide(color: Colors.grey))),
+                                child: TextField(
+                                  decoration: InputDecoration(
+                                      hintText: "Email or Phone number",
+                                      hintStyle: TextStyle(color: Colors.grey),
+                                      border: InputBorder.none),
+                                ),
+                              ),
+                              Container(
+                                padding: EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                    border: Border(
+                                        bottom:
+                                            BorderSide(color: Colors.grey))),
+                                child: TextField(
+                                    decoration: InputDecoration(
+                                        hintText: "Password",
+                                        hintStyle:
+                                            TextStyle(color: Colors.grey),
+                                        border: InputBorder.none),
+                                    obscureText: true),
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          height: 40,
+                        ),
+                        Text(
+                          "Forgot Password?",
+                          style: TextStyle(color: Colors.grey),
+                        ),
+                        SizedBox(
+                          height: 40,
+                        ),
+                        Container(
+                          height: 50,
+                          margin: EdgeInsets.symmetric(horizontal: 50),
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(50),
+                              color: Colors.deepPurpleAccent),
+                          child: Center(
+                            child: Text(
+                              "Login",
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ),
+                        // SizedBox(
+                        //   height: 50,
+                        // ),
+                        SizedBox(
+                          height: 30,
+                        ),
+                        Container(
+                            // width: size.width,
+                            // height: size.height,
+                            // padding: EdgeInsets.only(
+                            //     left: 20,
+                            //     right: 20,
+                            //     top: size.height * 0.2,
+                            //     bottom: size.height * 0.5),
+                            child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                              Center(
+                                child: FloatingActionButton.extended(
+                                  onPressed: () {
+                                    AuthService().sigInWithGoogle();
+                                  },
+                                  label: const Text('Sign in with Google'),
+                                  icon: Image.asset(
+                                    'assets/google_logo.png',
+                                    height: 32,
+                                    width: 32,
+                                  ),
+                                  backgroundColor: Colors.white,
+                                  foregroundColor: Colors.black,
+                                ),
+                              ),
+                            ]))
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            )
           ],
         ),
       ),
+
+      // width: size.width,
+      // height: size.height,
+      // padding: EdgeInsets.only(
+      //     left: 20,
+      //     right: 20,
+      //     top: size.height * 0.2,
+      //     bottom: size.height * 0.5),
+      // child: Column(
+      //   crossAxisAlignment: CrossAxisAlignment.center,
+      //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      //   children: [
+      //     Center(
+      //       child: FloatingActionButton.extended(
+      //         onPressed: () {
+      //           AuthService().sigInWithGoogle();
+      //         },
+      //         label: const Text('Sign in with Google'),
+      //         icon: Image.asset(
+      //           'assets/google_logo.png',
+      //           height: 32,
+      //           width: 32,
+      //         ),
+      //         backgroundColor: Colors.white,
+      //         foregroundColor: Colors.black,
+      //       ),
+      //     ),
     );
   }
 }
