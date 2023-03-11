@@ -164,9 +164,11 @@ class _ProductState extends State<Product> {
       // ),
       body: Visibility(
         visible: isLoading,
-        child: Center(child: CircularProgressIndicator()),
+        child: Center(child: CircularProgressIndicator(valueColor: new AlwaysStoppedAnimation<Color>(Colors.deepPurpleAccent),)),
         replacement: RefreshIndicator(
-          onRefresh: getAllProducts,
+          onRefresh: () async {
+            await putToDisplayProducts;
+          },
           child: CustomScrollView(
             slivers: [
               SliverAppBar(
