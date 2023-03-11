@@ -96,11 +96,12 @@ class _HomePageState extends State<HomePage> {
 
             agencys.length == 0
             ? Text(
-              'List Agency',
+              'CREATOR',
               style: const TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
-                  color: Colors.black87),
+                  color: Colors.deepPurpleAccent),
+              
             )
             : Expanded(
               child: ListView.builder(
@@ -115,12 +116,15 @@ class _HomePageState extends State<HomePage> {
                   );
               }),
             ),
+            const SizedBox(
+              height:20,
+            ),
              Text(
               FirebaseAuth.instance.currentUser!.displayName!,
               style: const TextStyle(
-                  fontSize: 30,
+                  fontSize: 24,
                   fontWeight: FontWeight.bold,
-                  color: Colors.black87),
+                  color: Colors.deepPurpleAccent),
             ),
             const SizedBox(
               height: 10,
@@ -130,14 +134,14 @@ class _HomePageState extends State<HomePage> {
               style: const TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
-                  color: Colors.black87),
+                  color: Colors.deepPurpleAccent),
             ),
             const SizedBox(
               height: 30,
             ),
             MaterialButton(
               padding: const EdgeInsets.all(10),
-              color: Colors.blue,
+              color: Colors.deepPurpleAccent,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(5)),
               child: const Text(
@@ -156,7 +160,7 @@ class _HomePageState extends State<HomePage> {
             ),
             MaterialButton(
               padding: const EdgeInsets.all(10),
-              color: Colors.blue,
+              color: Colors.deepPurpleAccent,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(5)),
               onPressed: () {

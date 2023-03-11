@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:demo/model/collection_model.dart';
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -14,7 +15,6 @@ class UploadProduct extends StatefulWidget {
 }
 
 class _UploadProductState extends State<UploadProduct> {
-  
   TextEditingController nameController = TextEditingController();
   TextEditingController quantityController = TextEditingController();
   TextEditingController priceController = TextEditingController();
@@ -33,9 +33,6 @@ class _UploadProductState extends State<UploadProduct> {
   }
 
   Future submitProduct() async {
-
-   
-
     //lấy dữ liệu từ text Field,
 
     final name = nameController.text;
@@ -52,7 +49,7 @@ class _UploadProductState extends State<UploadProduct> {
     // request.headers.addAll({'Authorization': 'Bearer Token'});
     request.files.add(await http.MultipartFile.fromPath('image', image!.path,
         contentType: MediaType('*', '*')));
-      request.fields['name'] = name;
+    request.fields['name'] = name;
 
     final body = {
       'name': name,
@@ -68,12 +65,12 @@ class _UploadProductState extends State<UploadProduct> {
 
     request.fields.addAll(body);
 
-  // request.fields['data'] = jsonEncode(body);
-  // request.fields['name'] = name;
-  // request.fields['quantity'] = quantity;
-  // request.fields['price'] = price;
-  // request.fields['idproductcategory'] = '1';
-  // request.fields['idcollection'] = '1';
+    // request.fields['data'] = jsonEncode(body);
+    // request.fields['name'] = name;
+    // request.fields['quantity'] = quantity;
+    // request.fields['price'] = price;
+    // request.fields['idproductcategory'] = '1';
+    // request.fields['idcollection'] = '1';
 
     print(request.fields);
     print(request.files.length);
@@ -81,8 +78,8 @@ class _UploadProductState extends State<UploadProduct> {
     final response = await request.send();
 
     if (response.statusCode == 200) {
-      nameController.text ='';
-      quantityController.text ='';
+      nameController.text = '';
+      quantityController.text = '';
       priceController.text = '';
       print('Uploaded successfully!');
     } else {
@@ -100,44 +97,46 @@ class _UploadProductState extends State<UploadProduct> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Upload Product in ${widget.collectionP.name}'),
-        leading: GestureDetector(
-          child: Icon(
-            Icons.arrow_back_ios,
-            color: Colors.white,
-          ),
-          onTap: () {
-            Navigator.pop(context);
-          },
+        backgroundColor: Colors.transparent,
+        toolbarHeight: 70,
+        elevation: 0,
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(24),
+                  bottomRight: Radius.circular(24)),
+              gradient: LinearGradient(colors: [
+                Color.fromARGB(255, 176, 106, 231),
+                Color.fromARGB(255, 166, 112, 232),
+                Color.fromARGB(255, 131, 123, 232),
+                Color.fromARGB(255, 104, 132, 231),
+              ])),
+        ),
+        centerTitle: true,
+        title: Text(
+          'NEW PRODUCT',
+          style: TextStyle(
+              color: Colors.white, fontWeight: FontWeight.bold, fontSize: 28),
         ),
       ),
       body: ListView(padding: EdgeInsets.all(30), children: [
-        TextField(
-          controller: nameController,
-          decoration: InputDecoration(hintText: 'Product Name'),
-        ),
-        TextField(
-          controller: quantityController,
-          decoration: InputDecoration(hintText: 'Quantity'),
-        ),
-        TextField(
-          controller: priceController,
-          decoration: InputDecoration(hintText: 'Price'),
-        ),
-        TextField(
-          decoration: InputDecoration(hintText: 'ProductCategory'),
-        ),
         Center(
           child: Column(children: [
             SizedBox(
-              height: 40,
+              height: 20,
             ),
-            image == null
-                ? Center(
-                    child: Text('No Image'),
-                  )
-                : Container(
-                    child: Center(
+     Container(
+                    
+                    child: image == null ?
+                    Center(
+                      child: Image.network(
+                       "https://aeroclub-issoire.fr/wp-content/uploads/2020/05/image-not-found.jpg",
+                        height: 250,
+                        width: 250,
+                        fit: BoxFit.cover,
+                      ),
+                    ) :
+                    Center(
                       child: Image.file(
                         File(image!.path).absolute,
                         height: 250,
@@ -147,21 +146,96 @@ class _UploadProductState extends State<UploadProduct> {
                     ),
                   ),
             SizedBox(
-              height: 40,
+              height: 20,
             ),
             ButtonPickImage(
-                title: 'Pick from Gallery',
+                title: 'Pick From Gallery',
                 icon: Icons.image_outlined,
                 onClick: getImage),
           ]),
         ),
+        SizedBox(
+          height: 40,
+        ),
+        Form(
+            child: Column(
+          children: [
+            TextFormField(
+                controller: nameController,
+                decoration: InputDecoration(
+                  hintText: 'Product Name',
+                  labelText: 'Name',
+                  labelStyle: TextStyle(
+                      color: Colors.deepPurpleAccent,
+                      fontWeight: FontWeight.bold),
+                  floatingLabelBehavior: FloatingLabelBehavior.always,
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(4)),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(4),
+                    borderSide: BorderSide(color: Colors.deepPurpleAccent),
+                  
+                  ),
+                  suffixIcon: Icon(FluentIcons.text_whole_word_20_regular, color: Colors.deepPurpleAccent,),
+                )),
+                SizedBox(
+          height: 15,
+        ),
+                TextFormField(
+                controller: quantityController,
+                decoration: InputDecoration(
+                  hintText: 'Product Quantity',
+                  labelText: 'Quantity',
+                  labelStyle: TextStyle(
+                      color: Colors.deepPurpleAccent,
+                      fontWeight: FontWeight.bold),
+                  floatingLabelBehavior: FloatingLabelBehavior.always,
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(4)),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(4),
+                    borderSide: BorderSide(color: Colors.deepPurpleAccent),
+                  
+                  ),
+                  suffixIcon: Icon(FluentIcons.box_16_regular, color: Colors.deepPurpleAccent,),
+                )),
+                 SizedBox(
+          height: 15,
+        ),
+                TextFormField(
+                controller: priceController,
+                decoration: InputDecoration(
+                  hintText: 'Product Price',
+                  labelText: 'Price',
+                  labelStyle: TextStyle(
+                      color: Colors.deepPurpleAccent,
+                      fontWeight: FontWeight.bold),
+                  floatingLabelBehavior: FloatingLabelBehavior.always,
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(4)),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(4),
+                    borderSide: BorderSide(color: Colors.deepPurpleAccent),
+                  
+                  ),
+                  suffixIcon: Icon(FluentIcons.currency_dollar_euro_24_regular, color: Colors.deepPurpleAccent,),
+                )),
+          ],
+        )),
+        TextField(
+          decoration: InputDecoration(hintText: 'ProductCategory'),
+        ),
+        SizedBox(
+          height: 40,
+        ),
+        ElevatedButton(
+            onPressed: () {
+              submitProduct();
+            },
+            child: Text('CREATE PRODUCT'),
+            style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.deepPurpleAccent))
       ]),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          submitProduct();
-        },
-        child: const Icon(Icons.accessible),
-      ),
     );
   }
 }
@@ -174,8 +248,13 @@ Widget ButtonPickImage(
     width: 250,
     child: ElevatedButton(
         onPressed: onClick,
+        style:
+            ElevatedButton.styleFrom(backgroundColor: Colors.deepPurpleAccent),
         child: Row(
           children: [
+            SizedBox(
+              width: 20,
+            ),
             Icon(icon),
             SizedBox(
               width: 10,

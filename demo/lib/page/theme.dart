@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:demo/model/theme_model.dart';
 import 'package:demo/page/collection.dart';
-import 'package:demo/page/upload_product.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
