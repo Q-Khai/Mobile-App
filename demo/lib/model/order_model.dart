@@ -2,17 +2,15 @@ class Orders {
   final String idorder;
   final String datetime;
   final String totalmoney;
-  final String idcustomer;
-  final String idagency;
-  final int status;
+  final bool status;
   final String tracking;
+  final DateTime date;
   Orders(
       {required this.idorder,
       required this.datetime,
       required this.totalmoney,
-      required this.idcustomer,
-      required this.idagency,
       required this.status,
-      required this.tracking
+      required this.tracking,
+      required this.date,
       });
 }

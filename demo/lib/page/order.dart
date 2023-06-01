@@ -1,9 +1,11 @@
 import 'dart:convert';
 import 'package:demo/model/order_model.dart';
+import 'package:demo/page/order_detail.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:intl/intl.dart';
 
 class Order extends StatefulWidget {
   const Order({super.key});
@@ -14,14 +16,18 @@ class Order extends StatefulWidget {
 
 class _OrderState extends State<Order> with TickerProviderStateMixin {
   static List<Orders> themes = [];
+  static List<Orders> ordersCompleted = [];
+
   List<Orders> display_Themes = List.from(themes);
 
   Future<void> getAllThemes() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? accessToken = prefs.getString('accessToken');
+    String? uid = prefs.getString("uid");
+
     Map<String, String> headers = {'Authorization': 'Bearer $accessToken'};
     final url = Uri.parse(
-        'https://ec2-3-0-97-134.ap-southeast-1.compute.amazonaws.com:8080/order/agency/1');
+        'https://ec2-3-0-97-134.ap-southeast-1.compute.amazonaws.com:8080/order/creator/${uid}');
     var response = await http.get(
       url,
       headers: headers,
@@ -34,20 +40,30 @@ class _OrderState extends State<Order> with TickerProviderStateMixin {
       final data = json['data'] as List<dynamic>;
       final dataTransformed = data
           .map((e) {
-            if (e['status'] == 0 && e['tracking']=='Pending') {
+            if (e['status'] == false && e['tracking'] == 'Pending') {
+              double amount = double.parse(e['totalmoneyCreator']);
+              String totalmoney =
+                  NumberFormat.currency(symbol: '\$').format(amount);
+              DateTime dateTime = DateTime.parse(e['datetime']);
+              String datetime =
+                  DateFormat('hh:mm a, dd/MM/yyyy').format(dateTime);
               return Orders(
-                idorder: e['idorder'],
-                datetime: e['datetime'],
-                totalmoney: e['totalmoney'],
-                idcustomer: e['idcustomer'],
-                idagency: e['idagency'],
-                status: e['status'],
-                tracking: e['tracking']
-              );
+                  idorder: e['idorder'],
+                  datetime: datetime,
+                  totalmoney: totalmoney,
+                  tracking: e['tracking'],
+                  status: e['status'],
+                  date: dateTime);
             }
           })
           .whereType<Orders>()
           .toList();
+      dataTransformed.sort((a, b) {
+        var adate = a.date; //before -> var adate = a.expiry;
+        var bdate = b.date; //var bdate = b.expiry;
+
+        return -adate.compareTo(bdate);
+      });
 
       // set List Themes
       setState(() {
@@ -58,13 +74,65 @@ class _OrderState extends State<Order> with TickerProviderStateMixin {
     }
   }
 
+  Future<void> getAllOrderCompleted() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? accessToken = prefs.getString('accessToken');
+    String? uid = prefs.getString("uid");
+
+    Map<String, String> headers = {'Authorization': 'Bearer $accessToken'};
+    final url = Uri.parse(
+        'https://ec2-3-0-97-134.ap-southeast-1.compute.amazonaws.com:8080/order/creator/${uid}');
+    var response = await http.get(
+      url,
+      headers: headers,
+    );
+
+    if (response.statusCode == 200) {
+      print('Fetch Data successfully!');
+      print(response.body);
+      final json = jsonDecode(response.body);
+      final data = json['data'] as List<dynamic>;
+      final dataTransformed = data
+          .map((e) {
+            if (e['status'] == false && e['tracking'] == 'Completed') {
+              double amount = double.parse(e['totalmoneyCreator']);
+              String totalmoney =
+                  NumberFormat.currency(symbol: '\$').format(amount);
+              DateTime dateTime = DateTime.parse(e['datetime']);
+              String datetime =
+                  DateFormat('hh:mm a, dd/MM/yyyy').format(dateTime);
+              return Orders(
+                  idorder: e['idorder'],
+                  datetime: datetime,
+                  totalmoney: totalmoney,
+                  tracking: e['tracking'],
+                  status: e['status'],
+                  date: dateTime);
+            }
+          })
+          .whereType<Orders>()
+          .toList();
+      dataTransformed.sort((a, b) {
+        var adate = a.date; //before -> var adate = a.expiry;
+        var bdate = b.date; //var bdate = b.expiry;
+
+        return -adate.compareTo(bdate);
+      });
+      // set List Themes
+      setState(() {
+        ordersCompleted = dataTransformed;
+      });
+    } else {
+      print('fetch data failed with status code ${response.statusCode}');
+    }
+  }
+
   @override
   void initState() {
     getAllThemes();
+    getAllOrderCompleted();
     super.initState();
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -183,7 +251,13 @@ class _OrderState extends State<Order> with TickerProviderStateMixin {
                   children: themes
                       .map(
                         (e) => InkWell(
-                          onTap: () {},
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        OrderDetails(orderP: e)));
+                          },
                           child: Container(
                             margin:
                                 EdgeInsetsDirectional.fromSTEB(16, 8, 16, 0),
@@ -216,7 +290,7 @@ class _OrderState extends State<Order> with TickerProviderStateMixin {
                                 color: Colors.deepPurpleAccent,
                               ),
                               title: Text(
-                                '${e.totalmoney} \$',
+                                '${e.totalmoney}',
                                 style: TextStyle(
                                     fontSize: 18, fontWeight: FontWeight.bold),
                               ),
@@ -238,60 +312,71 @@ class _OrderState extends State<Order> with TickerProviderStateMixin {
                         ),
                       )
                       .toList()),
-              ListView(children: [
-                InkWell(
-                  onTap: () {},
-                  child: Container(
-                    margin: EdgeInsetsDirectional.fromSTEB(16, 8, 16, 0),
-                    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 1),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(8),
-                      boxShadow: [
-                        BoxShadow(
-                          blurRadius: 3,
-                          color: Color(0x1F000000),
-                          offset: Offset(0, 1),
-                        )
-                      ],
-                    ),
-                    child: ListTile(
-                      // leading: ClipRRect(
-                      //   borderRadius: BorderRadius.circular(5),
-                      //   child: Image.network(
-                      //     'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8dXNlcnxlbnwwfHwwfHw%3D&auto=format&fit=crop&w=900&q=60',
-                      //     width: 70,
-                      //     height: 70,
-                      //     fit: BoxFit.cover,
-                      //   ),
-                      // ),
-                      leading: Icon(
-                        FluentIcons.clipboard_16_regular,
-                        size: 35,
-                        color: Colors.deepPurpleAccent,
-                      ),
-                      title: Text(
-                        "haha",
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold),
-                      ),
-                      subtitle: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text("Yesterday, 12:47 PM"),
-                          SizedBox(height: 10),
-                        ],
-                      ),
-                      trailing: PopupMenuButton(
-                        itemBuilder: (context) {
-                          return [];
-                        },
-                      ),
-                    ),
-                  ),
-                ),
-              ]),
+              ListView(
+                  children: ordersCompleted
+                      .map(
+                        (e) => InkWell(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        OrderDetails(orderP: e)));
+                          },
+                          child: Container(
+                            margin:
+                                EdgeInsetsDirectional.fromSTEB(16, 8, 16, 0),
+                            padding: EdgeInsets.symmetric(
+                                vertical: 10, horizontal: 1),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(8),
+                              boxShadow: [
+                                BoxShadow(
+                                  blurRadius: 3,
+                                  color: Color(0x1F000000),
+                                  offset: Offset(0, 1),
+                                )
+                              ],
+                            ),
+                            child: ListTile(
+                              // leading: ClipRRect(
+                              //   borderRadius: BorderRadius.circular(5),
+                              //   child: Image.network(
+                              //     'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8dXNlcnxlbnwwfHwwfHw%3D&auto=format&fit=crop&w=900&q=60',
+                              //     width: 70,
+                              //     height: 70,
+                              //     fit: BoxFit.cover,
+                              //   ),
+                              // ),
+                              leading: Icon(
+                                FluentIcons.clipboard_16_regular,
+                                size: 35,
+                                color: Colors.deepPurpleAccent,
+                              ),
+                              title: Text(
+                                '${e.totalmoney}',
+                                style: TextStyle(
+                                    fontSize: 18, fontWeight: FontWeight.bold),
+                              ),
+                              subtitle: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Text(e.datetime),
+                                  SizedBox(height: 10),
+                                ],
+                              ),
+                              trailing: PopupMenuButton(
+                                itemBuilder: (context) {
+                                  return [];
+                                },
+                              ),
+                            ),
+                          ),
+                        ),
+                      )
+                      .toList()),
               Center(child: Text("Nothing !")),
             ],
           )),

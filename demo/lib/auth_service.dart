@@ -36,13 +36,17 @@ class AuthService {
 
     UserCredential userCredential =
         await FirebaseAuth.instance.signInWithCredential(credential);
-    var accessToken = userCredential.user?.getIdToken().then((value) => sendToken(value));
+
+    //Gửi token cho server
+    var accessToken = userCredential.user?.getIdToken().then((value) => {sendToken(value),
+    print(value)});
     print("MY UID: "+ (userCredential.user?.uid).toString());
+        print("accessToken nè duma: "+ accessToken.toString());
 
     //Set uid cho local 
     setUserInfoToStorage(userCredential.user?.uid);
     //Gửi token cho server
-    sendToken(accessToken);
+    // sendToken(accessToken);
     return await FirebaseAuth.instance.signInWithCredential(credential);
   }
 

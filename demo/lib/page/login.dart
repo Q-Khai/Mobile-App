@@ -17,15 +17,14 @@ final passwordController = TextEditingController();
 class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
-    final Size size = MediaQuery.of(context).size;
     return Scaffold(
       body: Container(
         width: double.infinity,
         decoration: BoxDecoration(
             gradient: LinearGradient(begin: Alignment.topCenter, colors: [
           Colors.purple,
-          Colors.blue,
-          Colors.white
+          Colors.deepPurpleAccent,
+          Color.fromARGB(255, 6, 201, 207)
           // Color.fromARGB(255, 176, 106, 231),
           // Color.fromARGB(255, 166, 112, 232),
           // Color.fromARGB(255, 131, 123, 232),
@@ -49,14 +48,20 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   Text(
                     "For Creators",
-                    style: TextStyle(color: Colors.white, fontSize: 50),
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 50,
+                        fontWeight: FontWeight.bold),
                   ),
                   SizedBox(
                     height: 10,
                   ),
                   Text(
                     "Login",
-                    style: TextStyle(color: Colors.white, fontSize: 25),
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 25,
+                        fontWeight: FontWeight.bold),
                   )
                 ],
               ),
@@ -71,12 +76,9 @@ class _LoginPageState extends State<LoginPage> {
                         topRight: Radius.circular(60))),
                 child: SingleChildScrollView(
                   child: Padding(
-                    padding: EdgeInsets.all(30),
+                    padding: EdgeInsets.fromLTRB(40, 20, 40, 10),
                     child: Column(
                       children: <Widget>[
-                        SizedBox(
-                          height: 60,
-                        ),
                         Container(
                           decoration: BoxDecoration(
                             color: Colors.white,
@@ -94,12 +96,13 @@ class _LoginPageState extends State<LoginPage> {
                                 padding: EdgeInsets.all(10),
                                 decoration: BoxDecoration(
                                     border: Border(
-                                        bottom:
-                                            BorderSide(color: Colors.grey))),
+                                        bottom: BorderSide(
+                                            color: Colors.deepPurpleAccent))),
                                 child: TextField(
                                   decoration: InputDecoration(
-                                      hintText: "Email or Phone number",
-                                      hintStyle: TextStyle(color: Colors.grey),
+                                      hintText: "Email or Phone Number",
+                                      hintStyle: TextStyle(
+                                          color: Colors.deepPurpleAccent),
                                       border: InputBorder.none),
                                 ),
                               ),
@@ -107,13 +110,13 @@ class _LoginPageState extends State<LoginPage> {
                                 padding: EdgeInsets.all(10),
                                 decoration: BoxDecoration(
                                     border: Border(
-                                        bottom:
-                                            BorderSide(color: Colors.grey))),
+                                        bottom: BorderSide(
+                                            color: Colors.deepPurpleAccent))),
                                 child: TextField(
                                     decoration: InputDecoration(
                                         hintText: "Password",
-                                        hintStyle:
-                                            TextStyle(color: Colors.grey),
+                                        hintStyle: TextStyle(
+                                            color: Colors.deepPurpleAccent),
                                         border: InputBorder.none),
                                     obscureText: true),
                               ),
@@ -125,14 +128,16 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                         Text(
                           "Forgot Password?",
-                          style: TextStyle(color: Colors.grey),
+                          style: TextStyle(
+                              color: Colors.deepPurpleAccent,
+                              fontWeight: FontWeight.bold),
                         ),
                         SizedBox(
                           height: 40,
                         ),
                         Container(
                           height: 50,
-                          margin: EdgeInsets.symmetric(horizontal: 50),
+                          margin: EdgeInsets.symmetric(horizontal: 70),
                           decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(50),
                               color: Colors.deepPurpleAccent),
@@ -140,6 +145,7 @@ class _LoginPageState extends State<LoginPage> {
                             child: Text(
                               "Login",
                               style: TextStyle(
+                                  fontSize: 18,
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold),
                             ),
@@ -173,7 +179,7 @@ class _LoginPageState extends State<LoginPage> {
                                   icon: Image.asset(
                                     'assets/google_logo.png',
                                     height: 32,
-                                    width: 32,
+                                    width: 28,
                                   ),
                                   backgroundColor: Colors.white,
                                   foregroundColor: Colors.black,

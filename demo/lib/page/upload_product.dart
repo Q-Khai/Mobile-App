@@ -19,13 +19,22 @@ class _UploadProductState extends State<UploadProduct> {
   TextEditingController quantityController = TextEditingController();
   TextEditingController priceController = TextEditingController();
   File? image;
+  List<XFile> ImageList = [];
   final picker = ImagePicker();
 
+  // Future getImage() async {
+  //   final pickedImage = await picker.pickImage(source: ImageSource.gallery);
+  //   if (pickedImage != null) {
+  //     image = File(pickedImage.path);
+  //     setState(() {});
+  //   } else {
+  //     print('no image selected');
+  //   }
+  // }
   Future getImage() async {
-    final pickedImage = await picker.pickImage(source: ImageSource.gallery);
-
-    if (pickedImage != null) {
-      image = File(pickedImage.path);
+    final List<XFile>? pickedImage = await picker.pickMultiImage();
+    if (pickedImage!.isNotEmpty) {
+      ImageList.addAll(pickedImage);
       setState(() {});
     } else {
       print('no image selected');
@@ -38,19 +47,16 @@ class _UploadProductState extends State<UploadProduct> {
     final name = nameController.text;
     final price = priceController.text;
     final quantity = quantityController.text;
-    print(name);
-    print(price);
-    print(quantity);
 
     final url = Uri.parse(
         'https://ec2-3-0-97-134.ap-southeast-1.compute.amazonaws.com:8080/product/create');
 
     var request = http.MultipartRequest('POST', url);
     // request.headers.addAll({'Authorization': 'Bearer Token'});
-    request.files.add(await http.MultipartFile.fromPath('image', image!.path,
+    for (var i = 0; i < ImageList.length; i++) {
+    request.files.add(await http.MultipartFile.fromPath('image', ImageList[i].path,
         contentType: MediaType('*', '*')));
-    request.fields['name'] = name;
-
+    }
     final body = {
       'name': name,
       'quantity': quantity,
@@ -81,6 +87,10 @@ class _UploadProductState extends State<UploadProduct> {
       nameController.text = '';
       quantityController.text = '';
       priceController.text = '';
+      setState(() {
+        ImageList = [];
+      });
+
       print('Uploaded successfully!');
     } else {
       print('Upload failed with status code ${response.statusCode}');
@@ -119,32 +129,39 @@ class _UploadProductState extends State<UploadProduct> {
               color: Colors.white, fontWeight: FontWeight.bold, fontSize: 28),
         ),
       ),
-      body: ListView(padding: EdgeInsets.all(30), children: [
+      body: ListView(padding: EdgeInsets.all(30), children: <Widget>[
         Center(
-          child: Column(children: [
+          child: Column(children: <Widget>[
             SizedBox(
               height: 20,
             ),
-     Container(
-                    
-                    child: image == null ?
-                    Center(
-                      child: Image.network(
-                       "https://aeroclub-issoire.fr/wp-content/uploads/2020/05/image-not-found.jpg",
-                        height: 250,
-                        width: 250,
-                        fit: BoxFit.cover,
-                      ),
-                    ) :
-                    Center(
-                      child: Image.file(
-                        File(image!.path).absolute,
-                        height: 250,
-                        width: 250,
-                        fit: BoxFit.cover,
-                      ),
+            ImageList.isEmpty
+                ? Center(
+                    child: Image.asset(
+                      'assets/image_notfound.jpg',
+                      height: 250,
+                      width: 250,
+                      fit: BoxFit.cover,
+                    ),
+                  )
+                : Container(
+                  height: 300,
+                  child: GridView.builder(
+                     shrinkWrap: true,
+                    itemCount: ImageList.length,
+                    itemBuilder: ((context, index) {
+                      return Container(
+                        child: Image.file(File(ImageList[index].path),
+                            fit: BoxFit.cover),
+                      );
+                    }),
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 3,
+                      mainAxisSpacing: 15,
+                  crossAxisSpacing: 15,
                     ),
                   ),
+                ),
             SizedBox(
               height: 20,
             ),
@@ -174,14 +191,16 @@ class _UploadProductState extends State<UploadProduct> {
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(4),
                     borderSide: BorderSide(color: Colors.deepPurpleAccent),
-                  
                   ),
-                  suffixIcon: Icon(FluentIcons.text_whole_word_20_regular, color: Colors.deepPurpleAccent,),
+                  suffixIcon: Icon(
+                    FluentIcons.text_whole_word_20_regular,
+                    color: Colors.deepPurpleAccent,
+                  ),
                 )),
-                SizedBox(
-          height: 15,
-        ),
-                TextFormField(
+            SizedBox(
+              height: 15,
+            ),
+            TextFormField(
                 controller: quantityController,
                 decoration: InputDecoration(
                   hintText: 'Product Quantity',
@@ -195,14 +214,16 @@ class _UploadProductState extends State<UploadProduct> {
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(4),
                     borderSide: BorderSide(color: Colors.deepPurpleAccent),
-                  
                   ),
-                  suffixIcon: Icon(FluentIcons.box_16_regular, color: Colors.deepPurpleAccent,),
+                  suffixIcon: Icon(
+                    FluentIcons.box_16_regular,
+                    color: Colors.deepPurpleAccent,
+                  ),
                 )),
-                 SizedBox(
-          height: 15,
-        ),
-                TextFormField(
+            SizedBox(
+              height: 15,
+            ),
+            TextFormField(
                 controller: priceController,
                 decoration: InputDecoration(
                   hintText: 'Product Price',
@@ -216,15 +237,14 @@ class _UploadProductState extends State<UploadProduct> {
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(4),
                     borderSide: BorderSide(color: Colors.deepPurpleAccent),
-                  
                   ),
-                  suffixIcon: Icon(FluentIcons.currency_dollar_euro_24_regular, color: Colors.deepPurpleAccent,),
+                  suffixIcon: Icon(
+                    FluentIcons.currency_dollar_euro_24_regular,
+                    color: Colors.deepPurpleAccent,
+                  ),
                 )),
           ],
         )),
-        TextField(
-          decoration: InputDecoration(hintText: 'ProductCategory'),
-        ),
         SizedBox(
           height: 40,
         ),
