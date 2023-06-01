@@ -14,6 +14,7 @@ class Themes extends StatefulWidget {
 }
 
 class _ThemesState extends State<Themes> {
+  TextEditingController nameController = TextEditingController();
   static List<ThemesProduct> themes = [];
 
   List<ThemesProduct> display_Themes = List.from(themes);
@@ -35,17 +36,20 @@ class _ThemesState extends State<Themes> {
       print(response.body);
       final json = jsonDecode(response.body);
       final data = json['data'] as List<dynamic>;
-      final dataTransformed = data.map((e) {
-         if (e['status'] != 0) {
-        return ThemesProduct(
-          idtheme: e['idtheme'],
-          name: e['name'],
-          status: e['status'],
-        );
-         }
-      }).whereType<ThemesProduct>().toList();
+      final dataTransformed = data
+          .map((e) {
+            if (e['status'] != 0) {
+              return ThemesProduct(
+                idtheme: e['idtheme'],
+                name: e['name'],
+                status: e['status'],
+              );
+            }
+          })
+          .whereType<ThemesProduct>()
+          .toList();
 
-      // set List Themes 
+      // set List Themes
       setState(() {
         themes = dataTransformed;
       });
@@ -54,10 +58,41 @@ class _ThemesState extends State<Themes> {
     }
   }
 
+  Future submitTheme() async {
+    //lấy dữ liệu từ text Field,
+
+    final name = nameController.text;
+    
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? uid = prefs.getString("uid");
+    print(name);
+    print(uid);
+    final url = Uri.parse(
+        'https://ec2-3-0-97-134.ap-southeast-1.compute.amazonaws.com:8080/theme/create');
+    var response = await http.post(
+      url,
+      body: jsonEncode({"name": name, "idcreator": uid
+      }),
+      headers: {'Content-Type': 'application/json'},
+    );
+    // request.headers.addAll({'Authorization': 'Bearer Token'});
+
+    if (response.statusCode == 200) {
+      nameController.text = '';
+      print('Uploaded successfully!');
+    } else {
+      print('Upload failed with status code ${response.statusCode}');
+    }
+  }
+
+  void awaitCollections() async {
+    await getAllThemes();
+    display_Themes = List.from(themes);
+  }
+
   @override
   void initState() {
-    getAllThemes();
-    display_Themes = List.from(themes);
+    awaitCollections();
     super.initState();
   }
 
@@ -175,7 +210,8 @@ class _ThemesState extends State<Themes> {
                   .map(
                     (e) => InkWell(
                       onTap: () {
-                        Navigator.push(context,                           
+                        Navigator.push(
+                            context,
                             MaterialPageRoute(
                                 builder: (context) => Collection(themeP: e)));
                       },
@@ -218,7 +254,7 @@ class _ThemesState extends State<Themes> {
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
-                              Text("Yesterday, 12:47 PM"),                           
+                              Text("Yesterday, 12:47 PM"),
                               SizedBox(height: 10),
                               // Container(
                               //   height: 40,
@@ -257,6 +293,61 @@ class _ThemesState extends State<Themes> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8)),
+                title: Text(
+                  'Create Theme',
+                  style: TextStyle(color: Colors.deepPurpleAccent),
+                ),
+                content: TextFormField(
+                    controller: nameController,
+                    decoration: InputDecoration(
+                      hintText: 'Theme Name',
+                      labelText: 'Name',
+                      labelStyle: TextStyle(
+                          color: Colors.deepPurpleAccent,
+                          fontWeight: FontWeight.bold),
+                      floatingLabelBehavior: FloatingLabelBehavior.always,
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(4)),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(4),
+                        borderSide: BorderSide(color: Colors.deepPurpleAccent),
+                      ),
+                      suffixIcon: Icon(
+                        FluentIcons.text_whole_word_20_regular,
+                        color: Colors.deepPurpleAccent,
+                      ),
+                    )),
+                actions: <Widget>[
+                  TextButton(
+                    child: Text(
+                      'Cancel',
+                      style: TextStyle(color: Colors.deepPurpleAccent),
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                  TextButton(
+                    child: Text(
+                      'OK',
+                      style: TextStyle(
+                          color: Colors.deepPurpleAccent,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    onPressed: () {
+                      submitTheme();
+                    },
+                  ),
+                ],
+              );
+            },
+          );
         },
         label: Text('Create Theme'),
         icon: const Icon(FluentIcons.box_arrow_up_20_filled),

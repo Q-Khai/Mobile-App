@@ -28,7 +28,7 @@ class _ProductState extends State<Product> {
     String? accessToken = prefs.getString('accessToken');
     Map<String, String> headers = {'Authorization': 'Bearer $accessToken'};
     final url = Uri.parse(
-        'https://ec2-3-0-97-134.ap-southeast-1.compute.amazonaws.com:8080/product/?idcollection=${widget.collectionP.idcollection}');
+        'https://ec2-3-0-97-134.ap-southeast-1.compute.amazonaws.com:8080/product/?idcollection=${widget.collectionP.idcollection}&limit=30');
     var response = await http.get(
       url,
       headers: headers,
@@ -69,9 +69,12 @@ class _ProductState extends State<Product> {
     }
   }
 
-  void putToDisplayProducts() async {
+  Future<void> putToDisplayProducts() async {
     await getAllProducts();
-    display_Products = List.from(products);
+    setState(() {
+          display_Products = List.from(products);
+
+    });
   }
 
   void initState() {
@@ -166,9 +169,8 @@ class _ProductState extends State<Product> {
         visible: isLoading,
         child: Center(child: CircularProgressIndicator(valueColor: new AlwaysStoppedAnimation<Color>(Colors.deepPurpleAccent),)),
         replacement: RefreshIndicator(
-          onRefresh: () async {
-            await putToDisplayProducts;
-          },
+          onRefresh: 
+            putToDisplayProducts,
           child: CustomScrollView(
             slivers: [
               SliverAppBar(
@@ -299,9 +301,9 @@ class ProductWidget extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.max,
             children: [
-              Row(
-                mainAxisSize: MainAxisSize.max,
-                children: [
+              // Row(
+              //   mainAxisSize: MainAxisSize.max,
+              //   children: [
                   Expanded(
                     child: ClipRRect(
                       borderRadius: BorderRadius.only(
@@ -312,13 +314,13 @@ class ProductWidget extends StatelessWidget {
                       ),
                       child: Image.network(
                         imagePath,
-                        width: 100,
-                        height: 120,
-                        fit: BoxFit.cover,
+                        width: 300,
+                        height: 99,
+                        fit: BoxFit.contain,
                       ),
                     ),
-                  ),
-                ],
+                  // ),
+                // ],
               ),
               Padding(
                 padding: EdgeInsetsDirectional.fromSTEB(0, 4, 0, 0),
@@ -327,11 +329,11 @@ class ProductWidget extends StatelessWidget {
                   children: [
                     Flexible(
                       child: Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(8, 4, 0, 0),
+                        padding: EdgeInsetsDirectional.fromSTEB(12, 4, 0, 0),
                         child: Text(
                           productName,
                           overflow: TextOverflow.ellipsis,
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                          style: TextStyle(fontWeight: FontWeight.bold, ),
                         ),
                       ),
                     ),
@@ -344,7 +346,7 @@ class ProductWidget extends StatelessWidget {
                   mainAxisSize: MainAxisSize.max,
                   children: [
                     Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(8, 4, 0, 0),
+                      padding: EdgeInsetsDirectional.fromSTEB(12, 4, 0, 0),
                       child: Text(
                         '$price \$',
                       ),

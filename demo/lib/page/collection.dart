@@ -1,11 +1,13 @@
 import 'dart:convert';
-
+import 'dart:io';
+import 'package:http_parser/http_parser.dart';
 import 'package:demo/model/collection_model.dart';
 import 'package:demo/model/theme_model.dart';
 import 'package:demo/page/product.dart';
 import 'package:demo/page/upload_product.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
@@ -18,11 +20,64 @@ class Collection extends StatefulWidget {
 }
 
 class _CollectionState extends State<Collection> {
+  TextEditingController nameController = TextEditingController();
   static List<CollectionsProduct> collections = [];
 
   List<CollectionsProduct> display_Collections = List.from(collections);
-
+  File? image;
+  final picker = ImagePicker();
   //Get Collection from API
+  Future getImage() async {
+    final pickedImage = await picker.pickImage(source: ImageSource.gallery);
+    if (pickedImage != null) {
+      image = File(pickedImage.path);
+      setState(() {});
+    } else {
+      print('no image selected');
+    }
+  }
+Future submitCollection() async {
+    //lấy dữ liệu từ text Field,
+
+    final name = nameController.text;
+    print(name);
+    print('${widget.themeP.idtheme}');
+    final url = Uri.parse(
+        'https://ec2-3-0-97-134.ap-southeast-1.compute.amazonaws.com:8080/collection/create');
+
+    var request = http.MultipartRequest('POST', url);
+    // request.headers.addAll({'Authorization': 'Bearer Token'});
+ 
+    request.files.add(await http.MultipartFile.fromPath('image', image!.path,
+        contentType: MediaType('*', '*')));
+    
+    final body = {
+      'name': name,
+      'idtheme': '${widget.themeP.idtheme}'
+    };
+    request.headers.addAll({
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+    });
+
+    request.fields.addAll(body);
+
+    final response = await request.send();
+
+    if (response.statusCode == 200) {
+      
+      setState(() {
+        image = null;
+         nameController.text = '';
+      });
+
+      print('Uploaded successfully!');
+    } else {
+      print('Upload failed with status code ${response.statusCode}');
+    }
+  }
+
+
   Future<void> getAllCollections() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? accessToken = prefs.getString('accessToken');
@@ -62,7 +117,7 @@ class _CollectionState extends State<Collection> {
     }
   }
 
-  void putToDisplayCollections() async {
+   Future<void> putToDisplayCollections() async {
     await getAllCollections();
     display_Collections = List.from(collections);
   }
@@ -102,7 +157,7 @@ class _CollectionState extends State<Collection> {
         ),
         centerTitle: true,
         title: Text(
-          'COLLECTIONS',
+          '${widget.themeP.name}',
           style: TextStyle(
               color: Colors.white, fontWeight: FontWeight.bold, fontSize: 28),
         ),
@@ -119,7 +174,7 @@ class _CollectionState extends State<Collection> {
           preferredSize: Size.fromHeight(85),
           child: Column(
             children: <Widget>[
-              Text('${widget.themeP.name}',
+              Text('Collections',
                   style: TextStyle(
                       color: Colors.white70,
                       fontSize: 20.0,
@@ -152,35 +207,146 @@ class _CollectionState extends State<Collection> {
           ),
         ),
       ),
-      body: ListView(
-        children: <Widget>[
-          Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: display_Collections
-                  .map(
-                    (e) => InkWell(
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => Product(collectionP: e)));
-                      },
-                      child: CollectionContainer(
-                        title: e.name,
-                        imagePath: e.image,
+      body: RefreshIndicator(
+        onRefresh:
+          putToDisplayCollections,
+        
+        child: ListView(
+          children: <Widget>[
+            Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: display_Collections
+                    .map(
+                      (e) => InkWell(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => Product(collectionP: e)));
+                        },
+                        child: CollectionContainer(
+                          title: e.name,
+                          imagePath: e.image,
+                        ),
                       ),
-                    ),
-                  )
-                  .toList())
-        ],
+                    )
+                    .toList())
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
-          
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return StatefulBuilder(builder: (context, setState) {
+                return AlertDialog(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8)),
+                  title: Text(
+                    'New Collection',
+                    style: TextStyle(color: Colors.deepPurpleAccent),
+                  ),
+                  content: Container(
+                    height: 250,
+                    child: Column(
+                      children: [
+                        InkWell(
+                          onTap: (() async {
+                            final pickedImage = await picker.pickImage(
+                                source: ImageSource.gallery);
+                            if (pickedImage != null) {
+                              setState(() {
+                                image = File(pickedImage.path);
+                              });
+                            } else {
+                              print('no image selected');
+                            }
+                          }),
+                          child: Container(
+                            child: image == null
+                                ? Center(
+                                    child: Image.asset(
+                                      'assets/image_notfound.jpg',
+                                      height: 150,
+                                      width: 150,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  )
+                                : Center(
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(8),
+                                      child: Image.file(
+                                        File(image!.path).absolute,
+                                        height: 150,
+                                        width: 230,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                  ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 40,
+                        ),
+                        TextFormField(
+                            controller: nameController,
+                            decoration: InputDecoration(
+                              hintText: 'Collection Name',
+                              labelText: 'Name',
+                              labelStyle: TextStyle(
+                                  color: Colors.deepPurpleAccent,
+                                  fontWeight: FontWeight.bold),
+                              floatingLabelBehavior:
+                                  FloatingLabelBehavior.always,
+                              border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(4)),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(4),
+                                borderSide:
+                                    BorderSide(color: Colors.deepPurpleAccent),
+                              ),
+                              suffixIcon: Icon(
+                                FluentIcons.text_whole_word_20_regular,
+                                color: Colors.deepPurpleAccent,
+                              ),
+                            )),
+                      ],
+                    ),
+                  ),
+                  actions: <Widget>[
+                    TextButton(
+                      child: Text(
+                        'Cancel',
+                        style: TextStyle(color: Colors.deepPurpleAccent),
+                      ),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                    TextButton(
+                      child: Text(
+                        'OK',
+                        style: TextStyle(
+                            color: Colors.deepPurpleAccent,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      onPressed: () {
+                        submitCollection();
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ],
+                );
+              });
+            },
+          );
         },
         label: Text('New Collection',
             style: TextStyle(
-                color: Colors.deepPurpleAccent, fontWeight: FontWeight.bold, fontSize: 15)),
+                color: Colors.deepPurpleAccent,
+                fontWeight: FontWeight.bold,
+                fontSize: 15)),
         icon: const Icon(FluentIcons.note_add_16_filled,
             color: Colors.deepPurpleAccent),
         backgroundColor: Colors.white,
